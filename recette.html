@@ -1,41 +1,38 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <title>Détails de la Recette</title>
-</head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="index.html">Cuisine App</a>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="index.html">Accueil</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="favoris.html">Favoris</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="course.html">Liste de Courses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="planning.html">Planification des Repas</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<body>
-    <div class="container">
-        <h1 class="mt-5" id="recipe-title"></h1>
-        <div id="recipe-details" class="mt-4"></div>
-        <button id="add-to-favorites" class="btn btn-warning mt-3">Ajouter aux Favoris</button>
-        <h3 class="mt-4">Ingrédients</h3>
-        <ul id="ingredient-list"></ul>
-        <h3 class="mt-4">Étapes</h3>
-        <ol id="steps-list"></ol>
-    </div>
-    <script src="js/recette.js"></script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Toutes les Recettes - Application de Cuisine</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="index.html">Cuisine App</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="favoris.html">Favoris</a></li>
+                    <li class="nav-item"><a class="nav-link" href="course.html">Liste de Courses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="planning.html">Planification des Repas</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <h1 class="mt-5">Toutes les Recettes</h1>
+            <select id="category-select" class="form-control mb-3">
+                <option value="all">Toutes les catégories</option>
+                <option value="entrée">Entrées</option>
+                <option value="plat principal">Plats principaux</option>
+                <option value="dessert">Desserts</option>
+            </select>
+            <div id="recipe-list" class="mb-4"></div> <!-- Liste des recettes -->
+            <div id="recipe-details" class="border p-3"></div> <!-- Détails de la recette -->
+        </div>
+
+        <script src="js/recette.js"></script>
+
+    </body>
 </html>
