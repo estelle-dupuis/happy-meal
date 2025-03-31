@@ -1,38 +1,46 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Toutes les Recettes - Application de Cuisine</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/styles.css">
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="index.html">Cuisine App</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="favoris.html">Favoris</a></li>
-                    <li class="nav-item"><a class="nav-link" href="course.html">Liste de Courses</a></li>
-                    <li class="nav-item"><a class="nav-link" href="planning.html">Planification des Repas</a></li>
-                </ul>
-            </div>
-        </nav>
-
-        <div class="container">
-            <h1 class="mt-5">Toutes les Recettes</h1>
-            <select id="category-select" class="form-control mb-3">
-                <option value="all">Toutes les catégories</option>
-                <option value="entrée">Entrées</option>
-                <option value="plat principal">Plats principaux</option>
-                <option value="dessert">Desserts</option>
-            </select>
-            <div id="recipe-list" class="mb-4"></div> <!-- Liste des recettes -->
-            <div id="recipe-details" class="border p-3"></div> <!-- Détails de la recette -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toutes les Recettes - Application de Cuisine</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Cuisine App</a>
+        <!-- Bouton hamburger pour menu responsive -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Menu de navigation -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="favoris.html">Favoris</a></li>
+                <li class="nav-item"><a class="nav-link" href="course.html">Liste de Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="planning.html">Planification des Repas</a></li>
+            </ul>
         </div>
+    </nav>
 
-        <script src="js/recette.js"></script>
+    <div class="container">
+        <h1 class="mt-5">Toutes les Recettes</h1>
+        <select id="category-select" class="form-control mb-3">
+            <option value="all">Toutes les catégories</option>
+            <option value="entrée">Entrées</option>
+            <option value="plat principal">Plats principaux</option>
+            <option value="dessert">Desserts</option>
+        </select>
+        <div id="recipe-list" class="mb-4"></div> <!-- Liste des recettes -->
+        <div id="recipe-details" class="border p-3"></div> <!-- Détails de la recette -->
+    </div>
 
-    </body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/recette.js"></script>
+
+</body>
 </html>

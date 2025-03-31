@@ -10,7 +10,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="index.html">Cuisine App</a>
-        <div class="collapse navbar-collapse">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="index.html">Accueil</a>
@@ -27,12 +30,16 @@
             </ul>
         </div>
     </nav>
+
     <div class="container">
         <h1 class="mt-5">Liste de Courses</h1>
         <ul id="shopping-list" class="list-group mt-4"></ul>
         <button id="generate-file" class="btn btn-success mt-3">Générer le fichier de la liste de courses</button>
         <button id="clear-list" class="btn btn-danger mt-3">Supprimer la liste de courses</button>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/course.js"></script>
 </body>
 </html>
