@@ -98,7 +98,7 @@ function setupSearch() {
                 suggestionItem.className = 'list-group-item';
                 suggestionItem.innerText = recipe.nom;
                 suggestionItem.onclick = () => {
-                    window.location.href = `recipes.html?id=${recipes.indexOf(recipe)}`;
+                    window.location.href = `recette.html?id=${recipes.indexOf(recipe)}`;
                 };
                 suggestions.appendChild(suggestionItem);
             });

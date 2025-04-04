@@ -78,3 +78,10 @@ h1 {
     margin: auto; /* Centrer le conteneur */
     padding: 20px; /* Espacement interne */
 }
+#displayed-meal-plan {
+    max-width: 400px; /* Limite la largeur maximale de la section */
+    overflow-x: auto; /* Ajoute un défilement horizontal si nécessaire */
+}
+.planning-text {
+    font-size: 0.9rem; /* Réduit la taille de la police du texte */
+}

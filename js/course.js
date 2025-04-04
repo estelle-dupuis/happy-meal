@@ -8,42 +8,62 @@ function displayShoppingList() {
     const shoppingListElement = document.getElementById('shopping-list');
     shoppingListElement.innerHTML = '';
 
-    if (shoppingList.length === 0) {
-        shoppingListElement.innerHTML = '<li class="list-group-item">Aucun ingrédient dans la liste de courses.</li>';
-        return;
-    }
+    const ingredientMap = {};
 
     shoppingList.forEach(ingredient => {
+        if (ingredientMap[ingredient.nom]) {
+            ingredientMap[ingredient.nom] += parseFloat(ingredient.quantite);
+        } else {
+            ingredientMap[ingredient.nom] = parseFloat(ingredient.quantite);
+        }
+    });
+
+    for (const [nom, quantite] of Object.entries(ingredientMap)) {
         const li = document.createElement('li');
         li.className = 'list-group-item d-flex justify-content-between align-items-center';
-        li.innerText = `${ingredient.quantite} ${ingredient.nom}`; // Affiche la quantité et le nom de l'ingrédient
+        li.innerText = `${quantite} ${nom}`;
         const removeButton = document.createElement('button');
         removeButton.innerText = "Supprimer";
         removeButton.className = "btn btn-danger btn-sm";
-        removeButton.onclick = () => removeFromShoppingList(ingredient);
+        removeButton.onclick = () => removeFromShoppingList(nom);
         li.appendChild(removeButton);
         shoppingListElement.appendChild(li);
-    });
+    }
 }
 
 // Fonction pour retirer un ingrédient de la liste de courses
-function removeFromShoppingList(ingredientToRemove) {
+function removeFromShoppingList(ingredientName) {
     let shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
-    shoppingList = shoppingList.filter(ingredient => 
-        ingredient.nom !== ingredientToRemove.nom || ingredient.quantite !== ingredientToRemove.quantite
-    );
+    shoppingList = shoppingList.filter(ingredient => ingredient.nom !== ingredientName);
     localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
     displayShoppingList();
 }
 
-// Fonction pour générer un fichier de la liste de courses
+// Fonction pour télécharger la liste en PDF
 document.getElementById('generate-file').onclick = function() {
     const shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
-    const blob = new Blob([shoppingList.map(item => `${item.quantite} ${item.nom}`).join('\n')], { type: 'text/plain' });
+    const ingredientMap = {};
+
+    shoppingList.forEach(ingredient => {
+        if (ingredientMap[ingredient.nom]) {
+            ingredientMap[ingredient.nom] += parseFloat(ingredient.quantite);
+        } else {
+            ingredientMap[ingredient.nom] = parseFloat(ingredient.quantite);
+        }
+    });
+
+    let pdfContent = 'Liste de Courses\n\n';
+    for (const [nom, quantite] of Object.entries(ingredientMap)) {
+        pdfContent += `${quantite} ${nom}\n`;
+    }
+
+    const blob = new Blob([pdfContent], { type: 'application/pdf' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'liste_de_courses.txt';
-    link.click();
+    link.download = 'liste_de_courses.pdf'; // Nom du fichier à télécharger
+    document.body.appendChild(link);
+    link.click(); // Simule un clic pour démarrer le téléchargement
+    document.body.removeChild(link); // Supprime le lien après le téléchargement
 };
 
 // Fonction pour supprimer la liste de courses
@@ -52,43 +72,54 @@ document.getElementById('clear-list').onclick = function() {
     displayShoppingList();
 };
 
-// Fonction pour ajouter les ingrédients du planning à la liste de courses
-document.getElementById('add-planning-ingredients').onclick = function() {
-    const mealPlan = JSON.parse(localStorage.getItem('mealPlan')) || {};
+// Fonction pour ajouter les ingrédients d'une recette à la liste de courses
+function addIngredientsToShoppingList(mealPlan) {
     let shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
 
-    // Parcourir chaque jour du planning
     for (const day in mealPlan) {
-        const appetizerName = mealPlan[day].appetizer;
-        const mainName = mealPlan[day].main;
-        const dessertName = mealPlan[day].dessert;
+        const meal = mealPlan[day];
 
         // Ajouter les ingrédients de l'entrée
-        if (appetizerName) {
-            const appetizerRecipe = findRecipeByName(appetizerName);
+        if (meal.appetizer) {
+            const appetizerRecipe = findRecipeByName(meal.appetizer);
             if (appetizerRecipe) {
                 appetizerRecipe.ingredients.forEach(ingredient => {
-                    shoppingList.push({ nom: ingredient.nom, quantite: ingredient.quantite });
+                    const existingIngredient = shoppingList.find(item => item.nom === ingredient.nom);
+                    if (existingIngredient) {
+                        existingIngredient.quantite += parseFloat(ingredient.quantite); // Additionner les quantités
+                    } else {
+                        shoppingList.push({ nom: ingredient.nom, quantite: parseFloat(ingredient.quantite) });
+                    }
                 });
             }
         }
 
         // Ajouter les ingrédients du plat principal
-        if (mainName) {
-            const mainRecipe = findRecipeByName(mainName);
+        if (meal.main) {
+            const mainRecipe = findRecipeByName(meal.main);
             if (mainRecipe) {
                 mainRecipe.ingredients.forEach(ingredient => {
-                    shoppingList.push({ nom: ingredient.nom, quantite: ingredient.quantite });
+                    const existingIngredient = shoppingList.find(item => item.nom === ingredient.nom);
+                    if (existingIngredient) {
+                        existingIngredient.quantite += parseFloat(ingredient.quantite); // Additionner les quantités
+                    } else {
+                        shoppingList.push({ nom: ingredient.nom, quantite: parseFloat(ingredient.quantite) });
+                    }
                 });
             }
         }
 
         // Ajouter les ingrédients du dessert
-        if (dessertName) {
-            const dessertRecipe = findRecipeByName(dessertName);
+        if (meal.dessert) {
+            const dessertRecipe = findRecipeByName(meal.dessert);
             if (dessertRecipe) {
                 dessertRecipe.ingredients.forEach(ingredient => {
-                    shoppingList.push({ nom: ingredient.nom, quantite: ingredient.quantite });
+                    const existingIngredient = shoppingList.find(item => item.nom === ingredient.nom);
+                    if (existingIngredient) {
+                        existingIngredient.quantite += parseFloat(ingredient.quantite); // Additionner les quantités
+                    } else {
+                        shoppingList.push({ nom: ingredient.nom, quantite: parseFloat(ingredient.quantite) });
+                    }
                 });
             }
         }
@@ -96,9 +127,8 @@ document.getElementById('add-planning-ingredients').onclick = function() {
 
     // Enregistrer la liste de courses dans le localStorage
     localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
-    alert('Tous les ingrédients du planning ont été ajoutés à la liste de courses !');
-    displayShoppingList();
-};
+    alert('Les ingrédients du planning ont été ajoutés à la liste de courses !');
+}
 
 // Fonction pour trouver une recette par son nom
 function findRecipeByName(name) {
