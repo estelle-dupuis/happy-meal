@@ -1,28 +1,103 @@
-let recipes = {
-    entrees: [],
-    plats_principaux: [],
-    desserts: []
-};
+let recipes = [];
 
 // Charger les recettes depuis le fichier JSON
 fetch('data/recette.json')
-.then(response => response.json())
-.then(data => {
-    // Organiser les recettes par catégorie
-    data.recettes.forEach(recipe => {
-        if (recipe.categorie === "Entrée") {
-            recipes.entrees.push(recipe);
-        } else if (recipe.categorie === "Plat principal") {
-            recipes.plats_principaux.push(recipe);
-        } else if (recipe.categorie === "Dessert") {
-            recipes.desserts.push(recipe);
+    .then(response => response.json())
+    .then(data => {
+        recipes = data.recettes; // Charger les recettes dans la variable globale
+        displayFavorites(); // Afficher les favoris après le chargement des recettes
+    })
+    .catch(error => console.error('Erreur lors du chargement des recettes:', error));
+
+// Fonction pour afficher les recettes favorites
+function displayFavorites() {
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    const favoritesList = document.getElementById('favorites-list');
+    favoritesList.innerHTML = '';
+
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = '<p>Aucune recette favorite.</p>';
+        return;
+    }
+
+    favorites.forEach(favoriteId => {
+        // Trouver la recette par ID
+        const recipe = recipes.find(r => r.id === favoriteId);
+        if (recipe) {
+            const recipeDiv = document.createElement('div');
+            recipeDiv.className = 'card mt-3';
+            recipeDiv.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${recipe.nom}</h5>
+                    <button class="btn btn-primary" onclick="showRecipe(${favoriteId})">Voir la recette</button>
+                    <button class="btn btn-danger" onclick="removeFromFavorites(${favoriteId})">Retirer des Favoris</button>
+                </div>
+            `;
+            favoritesList.appendChild(recipeDiv);
         }
     });
-    populateMealPlanner();
-    loadSavedLists(); // Charger les listes de repas enregistrées
-    setupSearch(); // Initialiser la fonction de recherche
-})
-.catch(error => console.error('Erreur lors du chargement des recettes:', error));
+}
+
+// Fonction pour ajouter une recette aux favoris
+function addToFavorites(recipeId) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    if (!favorites.includes(recipeId)) {
+        favorites.push(recipeId);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        alert('Recette ajoutée aux favoris !');
+        displayFavorites();
+    } else {
+        alert('Cette recette est déjà dans vos favoris.');
+    }
+}
+
+// Fonction pour retirer une recette des favoris
+function removeFromFavorites(recipeId) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    favorites = favorites.filter(id => id !== recipeId);
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    alert('Recette retirée des favoris.');
+    displayFavorites();
+}
+
+// Fonction pour afficher les détails de la recette dans une modal
+function showRecipe(recipeId) {
+    const recipe = recipes.find(r => r.id === recipeId);
+    const modalBody = document.getElementById('modal-body');
+
+    if (!recipe) {
+        modalBody.innerHTML = '<p>Recette introuvable.</p>';
+        return;
+    }
+
+    // Créer le contenu de la modal
+    modalBody.innerHTML = `
+        <h2>${recipe.nom}</h2>
+        <p><strong>Catégorie:</strong> ${recipe.categorie}</p>
+        <p><strong>Temps de préparation:</strong> ${recipe.temps_preparation}</p>
+        <h3>Ingrédients:</h3>
+        <ul>
+            ${recipe.ingredients.map(ingredient => `<li>${ingredient.quantite} ${ingredient.nom}</li>`).join('')}
+        </ul>
+        <h3>Étapes:</h3>
+        <ol>
+            ${recipe.etapes.map(etape => `<li>${etape}</li>`).join('')}
+        </ol>
+    `;
+
+    // Afficher la modal
+    document.getElementById('recipeModal').style.display = 'block';
+}
+
+// Fonction pour fermer la modal
+function closeModal() {
+    document.getElementById('recipeModal').style.display = 'none';
+}
+
+// Charger les favoris au démarrage
+window.onload = function () {
+    displayFavorites();
+};
 
 // Fonction pour gérer l'autocomplétion
 function setupSearch() {
@@ -32,7 +107,7 @@ function setupSearch() {
         suggestions.innerHTML = '';
         
         if (query) {
-            const filteredRecipes = [...recipes.entrees, ...recipes.plats_principaux, ...recipes.desserts].filter(recipe => recipe.nom.toLowerCase().includes(query));
+            const filteredRecipes = recipes.filter(recipe => recipe.nom.toLowerCase().includes(query));
             filteredRecipes.forEach(recipe => {
                 const suggestionItem = document.createElement('li');
                 suggestionItem.className = 'list-group-item';
@@ -58,13 +133,13 @@ function populateMealPlanner() {
         const dessertSelect = document.getElementById(day + '-dessert');
 
         // Remplir les sélecteurs avec les recettes
-        recipes.entrees.forEach(recipe => {
+        recipes.filter(recipe => recipe.categorie === "Entrée").forEach(recipe => {
             appetizerSelect.appendChild(createOption(recipe.nom, recipe.nom));
         });
-        recipes.plats_principaux.forEach(recipe => {
+        recipes.filter(recipe => recipe.categorie === "Plat principal").forEach(recipe => {
             mainSelect.appendChild(createOption(recipe.nom, recipe.nom));
         });
-        recipes.desserts.forEach(recipe => {
+        recipes.filter(recipe => recipe.categorie === "Dessert").forEach(recipe => {
             dessertSelect.appendChild(createOption(recipe.nom, recipe.nom));
         });
     });
@@ -231,7 +306,7 @@ function displayMealPlan(mealPlan) {
         
         // Fonction pour trouver une recette par son nom
         function findRecipeByName(name) {
-            return [...recipes.entrees, ...recipes.plats_principaux, ...recipes.desserts].find(recipe => recipe.nom === name);
+            return recipes.find(recipe => recipe.nom === name);
         }
         
         // Fonction pour choisir des repas aléatoires
@@ -244,9 +319,9 @@ function displayMealPlan(mealPlan) {
                 const dessertSelect = document.getElementById(day + '-dessert');
         
                 // Choisir un repas aléatoire pour chaque type
-                appetizerSelect.value = getRandomRecipe(recipes.entrees).nom;
-                mainSelect.value = getRandomRecipe(recipes.plats_principaux).nom;
-                dessertSelect.value = getRandomRecipe(recipes.desserts).nom;
+                appetizerSelect.value = getRandomRecipe(recipes.filter(recipe => recipe.categorie === "Entrée")).nom;
+                mainSelect.value = getRandomRecipe(recipes.filter(recipe => recipe.categorie === "Plat principal")).nom;
+                dessertSelect.value = getRandomRecipe(recipes.filter(recipe => recipe.categorie === "Dessert")).nom;
             });
         };
         
